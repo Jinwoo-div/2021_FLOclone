@@ -1,34 +1,28 @@
 package com.example.layout
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Database
+import com.example.layout.databinding.FragmentAlbumBinding
 import com.example.layout.databinding.FragmentStoreBinding
+import com.example.layout.databinding.ItemRecyclerStoreListBinding
+import com.google.android.material.tabs.TabLayoutMediator
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [store.newInstance] factory method to
- * create an instance of this fragment.
- */
 class store : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var binding: FragmentStoreBinding
+
+    private lateinit var songDB: SongDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -37,26 +31,63 @@ class store : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentStoreBinding.inflate(inflater, container, false)
+
+        initListener()
+        val vpAdapter = StoreVPAdapter(requireActivity())
+        vpAdapter.addFragment(RecyclerStoreListItem(0), "song")
+        vpAdapter.addFragment(RecyclerStoreListItem(0), "temp")
+        vpAdapter.addFragment(RecyclerStoreListItem(1), "album")
+
+        binding.storeListVp.adapter = vpAdapter
+
+        TabLayoutMediator(binding.storeTabTl, binding.storeListVp) {tab, position->
+            when (position) {
+                0 -> {
+                    tab.text = "저장한 곡"
+                }
+
+                1-> {
+                    tab.text = "음악파일"
+               }
+
+                2-> {
+                    tab.text = "저장앨범"
+                }
+            }
+        }.attach()
+
         return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment store.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            store().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onResume() {
+        super.onResume()
+        val spf =  activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+        val id = spf?.getInt("jwt", 0)
+        val db = SongDatabase.getInstance(context as MainActivity)
+        val user :User? = db?.UserDao()?.getUser(id)
+        if (id != 0) {
+            binding.storeLoginTv.text = "로그아웃"
+            binding.storeUserNameTv.text = user?.name
+        }
+        else {
+        }
     }
+
+    fun initListener() {
+        binding.storeLoginTv.setOnClickListener() {
+            if (binding.storeLoginTv.text == "로그인") {
+                val intent = Intent(context as MainActivity, LoginActivity::class.java)
+                startActivity(intent)
+            }
+            else {
+                val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+                val editor = spf?.edit()
+                editor?.remove("jwt")
+                editor?.apply()
+                binding.storeLoginTv.text = "로그인"
+                binding.storeUserNameTv.text = ""
+            }
+        }
+    }
+
 }

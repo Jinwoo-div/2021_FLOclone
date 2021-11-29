@@ -33,6 +33,7 @@ class AlbumListAdapter(private val dataSet: ArrayList<List<String>>) :
         fun bind(data:List<String>) {
             binding.albumListItemArtistTv.text = data[1]
             binding.albumListItemTitleTv.text = data[0]
+            binding.albumListItemNumTv.text = data[2]
             
             itemView.setOnClickListener {
                 Toast.makeText(binding.root.context, binding.albumListItemTitleTv.text, Toast.LENGTH_SHORT).show()

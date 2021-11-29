@@ -26,8 +26,10 @@ class AlbumListFragment: Fragment() {
 
 
     private fun addData() {
-        for (i in 0..99) {
-            dataSet.add(listOf("$i th main", "$i th sub"))
+        var db = SongDatabase.getInstance(context as MainActivity)!!
+        var songs = db.SongDao().getSongs()
+        for (i in 0..songs.size - 1) {
+            dataSet.add(listOf(songs[i].title, songs[i].singer, i.toString()))
         }
     }
 

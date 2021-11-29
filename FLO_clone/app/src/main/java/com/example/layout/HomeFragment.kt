@@ -10,22 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.layout.databinding.FragmentHomeBinding
 import com.google.gson.Gson
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [home.newInstance] factory method to
- * create an instance of this fragment.
- */
 class home : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
     private var albumDatas = ArrayList<Album>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,14 +22,19 @@ class home : Fragment() {
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        albumDatas.apply {
-            add(Album("title", "bts", R.drawable.img_album_exp))
-            add(Album("butter", "bts", R.drawable.img_album_exp2))
-            add(Album("butter", "bts", R.drawable.img_album_exp2))
-            add(Album("butter", "bts", R.drawable.img_album_exp))
-            add(Album("butter", "bts", R.drawable.img_album_exp2))
-            add(Album("butter", "bts", R.drawable.img_album_exp))
+        val db = SongDatabase.getInstance(context as MainActivity)!!
+        var albumdatas = db.AlbumDao().getAlbums()
+        for (i in 0..albumdatas.size -1) {
+            albumDatas.add(Album(albumdatas[i].title, albumdatas[i].singer, albumdatas[i].coverImg))
         }
+//        albumDatas.apply {
+//            add(Album("title", "bts", R.drawable.img_album_exp))
+//            add(Album("title1", "bts1", R.drawable.img_album_exp2))
+//            add(Album("title2", "bts2", R.drawable.img_album_exp))
+//            add(Album("title3", "bts3", R.drawable.img_album_exp2))
+//            add(Album("title4", "bts4", R.drawable.img_album_exp))
+//            add(Album("title5", "bts5", R.drawable.img_album_exp2))
+//        }
 
         val albumRVAdapter = AlbumRVAdapter(albumDatas)
         albumRVAdapter.setMyItemClickListener(object : AlbumRVAdapter.MyItemClickListener {

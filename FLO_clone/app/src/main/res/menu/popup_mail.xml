@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mail_gmail"
+        android:title="gmail.com" />
+    <item
+        android:id="@+id/mail_naver"
+        android:title="naver.com" />
+    <item
+        android:id="@+id/mail_daum"
+        android:title="daum.net" />
+    <item
+        android:id="@+id/mail_inha"
+        android:title="inha.edu" />
+    <item
+        android:id="@+id/mail_user"
+        android:title="직접입력" />
+</menu>

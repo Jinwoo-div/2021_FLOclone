@@ -49,6 +49,7 @@
             app:layout_constraintHorizontal_weight="1"
             android:background="@color/design_default_color_background"
             android:src="@drawable/ic_my_like_off"
+            android:tag="off"
             android:scaleType="fitCenter">
         </ImageButton>
         <ImageButton
