@@ -187,5 +187,13 @@
         android:background="@color/purple_500"
         android:textAlignment="center">
     </TextView>
+    <ProgressBar
+        android:id="@+id/signup_loading_pb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible">
+    </ProgressBar>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

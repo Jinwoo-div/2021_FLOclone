@@ -62,7 +62,7 @@ class store : Fragment() {
     override fun onResume() {
         super.onResume()
         val spf =  activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        val id = spf?.getInt("jwt", 0)
+        val id = spf?.getInt("userIdx", 0)
         val db = SongDatabase.getInstance(context as MainActivity)
         val user :User? = db?.UserDao()?.getUser(id)
         if (id != 0) {

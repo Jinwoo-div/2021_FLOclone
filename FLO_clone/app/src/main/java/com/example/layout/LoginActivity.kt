@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Database
 import com.example.layout.databinding.ActivityLoginBinding
 
-class LoginActivity: AppCompatActivity() {
+class LoginActivity: AppCompatActivity(), LoginView {
     lateinit var binding : ActivityLoginBinding
 
     private var firstTab = 1
@@ -142,22 +142,35 @@ class LoginActivity: AppCompatActivity() {
         binding.loginGoLoginTv.setOnClickListener() {
             val chk = check()
             if (chk) {
-                val db = SongDatabase.getInstance(this)!!
                 var id = binding.loginIdEt.text.toString() + "@" + binding.loginAddressEt.text.toString()
                 var pw = binding.loginPwEt.text.toString()
-                var user = db.UserDao().loginUser(id, pw)
-                if (user != null) {
-                    val spf = getSharedPreferences("auth", MODE_PRIVATE)
-                    val editor = spf.edit()
-                    editor.putInt("jwt", user.id)
-                    editor.apply()
-                    finish()
-                }
-                else {
-                    Toast.makeText(this, "일치하는 회원정보가 없습니다", Toast.LENGTH_SHORT).show()
-                }
+                val authService = AuthService()
+                authService.setLoginView(this)
+                authService.login(User(id, pw, ""))
             }
-
         }
     }
+
+    override fun onLoginLoading() {
+        binding.loginLoadingPb.visibility = View.VISIBLE
+
+    }
+
+    override fun onLoginSuccess(auth: Auth) {
+        binding.loginLoadingPb.visibility = View.GONE
+        val spf = getSharedPreferences("auth", MODE_PRIVATE)
+        val editor = spf.edit()
+        editor.putString("jwt", auth.jwt)
+        editor.putInt("userIdx", auth.userIdx)
+        editor.apply()
+
+        finish()
+    }
+
+    override fun onLoginFailure(code: Int, message: String) {
+        binding.loginLoadingPb.visibility = View.GONE
+        Toast.makeText(this, "일치하는 회원정보가 없습니다", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
 }

@@ -4,19 +4,17 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.layout.databinding.ActivitySignupBinding
-import java.net.PasswordAuthentication
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
-class SignupActivity: AppCompatActivity() {
+class SignupActivity: AppCompatActivity(), SignupView {
     lateinit var binding: ActivitySignupBinding
 
     private var firstTab = 1
@@ -224,20 +222,58 @@ class SignupActivity: AppCompatActivity() {
 
         binding.signupFinTv.setOnClickListener() {
             var chk = check()
+//            if (chk) {
+//                var db = SongDatabase.getInstance(this)!!
+//                var id = binding.signupIdEt.text.toString() + "@" + binding.signupAddressEt.text.toString()
+//                var pw = binding.signupPwEt.text.toString()
+//                var name = binding.signupNameEt.text.toString()
+//                var user = db.UserDao().compareUser(id)
+//                if (user == null) {
+//                    user = User(id, pw, name)
+//                    db.UserDao().insert(user)
+//                    finish()
+//                }
+//                else {
+//                    Toast.makeText(this, "중복된 이메일입니다", Toast.LENGTH_SHORT).show()
+//                }
+//            }
             if (chk) {
-                var db = SongDatabase.getInstance(this)!!
-                var id = binding.signupIdEt.text.toString() + "@" + binding.signupAddressEt.text.toString()
+                var id =
+                    binding.signupIdEt.text.toString() + "@" + binding.signupAddressEt.text.toString()
                 var pw = binding.signupPwEt.text.toString()
                 var name = binding.signupNameEt.text.toString()
-                var user = db.UserDao().compareUser(id)
-                if (user == null) {
-                    user = User(id, pw, name)
-                    db.UserDao().insert(user)
-                    finish()
-                }
-                else {
-                    Toast.makeText(this, "중복된 이메일입니다", Toast.LENGTH_SHORT).show()
-                }
+                val retrofit = Retrofit.Builder().baseUrl("http://13.125.121.202").addConverterFactory(GsonConverterFactory.create()).build()
+
+
+                val authService = AuthService()
+                authService.setSignupView(this)
+
+                authService.signup(User(id, pw, name))
+            }
+        }
+    }
+
+    override fun onSignupLoading() {
+        binding.signupLoadingPb.visibility = View.VISIBLE
+    }
+
+    override fun onSignupSuccess() {
+        binding.signupLoadingPb.visibility = View.GONE
+        var db = SongDatabase.getInstance(this)!!
+        var id = binding.signupIdEt.text.toString() + "@" + binding.signupAddressEt.text.toString()
+        var pw = binding.signupPwEt.text.toString()
+        var name = binding.signupNameEt.text.toString()
+        val user = User(id, pw, name)
+        db.UserDao().insert(user)
+        finish()
+    }
+
+    override fun onSignupFailure(code: Int, message: String) {
+        binding.signupLoadingPb.visibility = View.GONE
+
+        when(code) {
+            2016, 2017 -> {
+                Toast.makeText(this, "이메일 문제발생", Toast.LENGTH_LONG).show()
             }
         }
     }
