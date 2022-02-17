@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.layout">
+    package="com.example.FLO_clone">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -14,7 +14,7 @@
         android:usesCleartextTraffic="true"
 
         android:theme="@style/Theme.Layout">
-        <activity android:name=".SplashActivity">
+        <activity android:name="com.example.FLO_clone.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,13 +22,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.FLO_clone.MainActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".SongActivity"></activity>
-        <activity android:name=".SignupActivity"
+        <activity android:name="com.example.FLO_clone.SongActivity"></activity>
+        <activity android:name="com.example.FLO_clone.ui.signup.SignupActivity"
             android:exported="true"></activity>
-        <activity android:name=".LoginActivity"
+        <activity android:name="com.example.FLO_clone.ui.login.LoginActivity"
             android:exported="true"></activity>
     </application>
 
